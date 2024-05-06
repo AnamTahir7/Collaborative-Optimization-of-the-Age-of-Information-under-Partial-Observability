@@ -25,12 +25,10 @@ class EvaluatePolicy:
         :param run_parameters: preloaded run parameters for the environment
         """
         self.params = run_parameters
-        self.trained_policy = self.params.pop('trained_policy', 'mf')
-        self.cont_state = self.params.pop('cont_state', 'false')
+        self.trained_policy = self.params.pop('trained_policy', 'pomfc')
         self.results_dir = Path(results_dir)
         self.results_dir.mkdir(exist_ok=True)
         self.trainer = trainer
-        self.rnn = self.params.pop('rnn')
 
     @classmethod
     def from_checkpoint(cls, checkpoint_path_orig, results_dir_suffix='eval'):
@@ -47,8 +45,6 @@ class EvaluatePolicy:
             run_params = json.load(jf)
         run_params['eval'] = True
         trained_policy = run_params.pop('config')
-        rnn = run_params.pop('rnn')
-        cont_state = run_params.pop('cont_state')
         global AOI_env
 
         with checkpoint_path.parent.parent.joinpath('params.pkl').open('rb') as pf:
@@ -70,8 +66,6 @@ class EvaluatePolicy:
 
         agent.restore(_chkpnt_file)
         run_params['trained_policy'] = trained_policy
-        run_params['rnn'] = rnn
-        run_params['cont_state'] = cont_state
         return cls(agent, checkpoint_path.parent.joinpath(results_dir_suffix), **run_params)
 
     @staticmethod
@@ -82,8 +76,6 @@ class EvaluatePolicy:
     def single_run_test(self, env, number_of_agents_test):
         time_steps = self.params.get('simulation_timesteps', 50)
         obs = env.reset()
-        state = None
-        state_all = [state for _ in range(env.number_of_agents)]
         action_trajectory = []
         for i in range(time_steps):
             if self.trained_policy == 'pomfc':

@@ -3,7 +3,7 @@ from utils import save_to_file
 import matplotlib.pyplot as plt
 
 class A1:
-    def __init__(self, env_creator, rnn, **kwargs):
+    def __init__(self, env_creator, **kwargs):
         super().__init__()
         self.env_creator = env_creator
         self.kwargs = kwargs
@@ -22,7 +22,6 @@ class A1:
         for j in range(mc):
             print(j)
             all_rewards = []
-            avg_rewards = []
             all_drops = []
             all_aoi = np.zeros([episode_timesteps, env.number_of_agents])
             sum_ep_rewards = np.zeros(episode_timesteps)

@@ -6,7 +6,6 @@ from pathlib import Path
 
 import numpy as np
 from ray.tune.logger import UnifiedLogger
-import matplotlib
 
 def create_directory(path):
     try:
@@ -56,8 +55,8 @@ def recursive_conversion(d, func=ndarray_to_list):
 use_particles = True
 
 
-def create_file_path(number_of_agents, config, use_true_state, use_belief_state, rnn, channel_known, use_particles,
-                     cont, weighted_action, use_unack_msg, dt=None, r=None, true_state_thr=None):
+def create_file_path(number_of_agents, config, use_true_state, use_belief_state, channel_known, use_particles,
+                     use_unack_msg, dt=None, r=None, true_state_thr=None):
     if config in ('rnd', 'a1', 'thr'):
         # dt = get_short_datetime()
         script_path = Path(__file__).absolute().parent
@@ -67,8 +66,7 @@ def create_file_path(number_of_agents, config, use_true_state, use_belief_state,
             un = 'use_unack_msg'
         else:
             un = 'dont_use_unack_msg'
-        results_dir = results_dir.joinpath('{}_{}_{}_{}_{}_{}'.format(config, channel_known, use_particles, cont,
-                                                                      weighted_action, un))
+        results_dir = results_dir.joinpath('{}_{}_{}_{}'.format(config, channel_known, use_particles, un))
         results_dir.mkdir(exist_ok=True)
         fn = dt
         if use_true_state:
@@ -93,12 +91,8 @@ def create_file_path(number_of_agents, config, use_true_state, use_belief_state,
         else:
             un = 'dont_use_unack_msg'
 
-        if rnn:
-            results_dir = results_dir.joinpath('rnn_{}_{}_{}_{}_{}_{}_{}'.format(number_of_agents, config, channel_known,
-                                                                              use_particles, cont, weighted_action, un))
-        else:
-            results_dir = results_dir.joinpath('{}_{}_{}_{}_{}_{}_{}'.format(number_of_agents, config, channel_known,
-                                                                          use_particles, cont, weighted_action, un))
+        results_dir = results_dir.joinpath('{}_{}_{}_{}_{}'.format(number_of_agents, config, channel_known,
+                                                                          use_particles, un))
         results_dir.mkdir(exist_ok=True)
         fn = dt
         if use_true_state:
@@ -111,7 +105,6 @@ def create_file_path(number_of_agents, config, use_true_state, use_belief_state,
 
 
 def save_to_file(curr_output_json, output_dir, i):
-    # i += 200
     curr_output_json = recursive_conversion(curr_output_json)
     if isinstance(i, str):
         with open(os.path.join(output_dir, 'data_{}.json'.format(i)), 'w') as json_file:

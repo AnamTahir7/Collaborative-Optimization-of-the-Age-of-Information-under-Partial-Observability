@@ -2,8 +2,8 @@ import numpy as np
 from utils import save_to_file
 import matplotlib.pyplot as plt
 
-class RND:
-    def __init__(self, env_creator, rnn, **kwargs):
+class ConstantRate:
+    def __init__(self, env_creator, **kwargs):
         super().__init__()
         self.env_creator = env_creator
         self.kwargs = kwargs
